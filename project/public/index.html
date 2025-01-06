@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crustdata Chatbot</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+    #chat {
+      border: 1px solid #ccc;
+      padding: 10px;
+      height: 400px;
+      overflow-y: auto;
+    }
+    #input {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Crustdata Chatbot</h1>
+  <div id="chat"></div>
+  <div id="input">
+    <input type="text" id="question" placeholder="Ask a question..." style="width: 80%;" />
+    <button onclick="sendQuestion()">Send</button>
+  </div>
+  <script>
+    const chatDiv = document.getElementById("chat");
+
+    async function sendQuestion() {
+      const questionInput = document.getElementById("question");
+      const question = questionInput.value.trim();
+
+      if (!question) return;
+
+      // Add question to chat
+      chatDiv.innerHTML += `<p><strong>You:</strong> ${question}</p>`;
+      questionInput.value = "";
+
+      // Send question to server
+      const response = await fetch("/api/query", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
+
+      const data = await response.json();
+      chatDiv.innerHTML += `<p><strong>Bot:</strong> ${data.answer}</p>`;
+      chatDiv.scrollTop = chatDiv.scrollHeight; // Auto-scroll
+    }
+  </script>
+</body>
+</html>
